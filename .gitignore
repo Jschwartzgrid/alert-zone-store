@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+
+# API response caches (regenerable)
+data/_cache/
+data/_cache_zones/
+
+# Local only
+CLAUDE.md
+submissions/
