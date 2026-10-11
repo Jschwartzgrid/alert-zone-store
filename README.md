@@ -8,11 +8,11 @@ indexed for the questions the people using it actually ask.
 
 | Who | What they ask | Served by |
 |---|---|---|
-| A regional council's emergency coordinator | How often was my council alerted, where, and when did it spike? | `municipality_en` + `timestamp` |
-| A national planner | Which regions get the least warning time, and how many alerts does that affect? | `region_en`, `shelter_time_seconds` |
-| A resident, through an app | Which alerts for my area have I not been shown yet? | `users` watermark + `zone` + `timestamp` |
+| A municipal planner | How often was my area alerted across localities and periods, and when did it spike? | `municipality_en` + `timestamp` |
+| A duty officer | How many alerts of each category hit each region in a given period? | `message_type` + `timestamp`, grouped by `region_en` |
+| A resident, through an app | What is my locality's alert history, and which alerts have I not been shown yet? | `zone` + `timestamp`, `users` watermark |
 
-Alerts per month for one regional council:
+Alerts per month for one regional council (municipal planner):
 
 ```js
 db.alerts.aggregate([
@@ -22,13 +22,14 @@ db.alerts.aggregate([
 ])
 ```
 
-Alerts by shelter time across the country:
+Alerts by region and category for one day (duty officer):
 
 ```js
 db.alerts.aggregate([
-  { $match: { message_type: "alert" } },
-  { $group: { _id: "$shelter_time_seconds", alerts: { $sum: 1 } } },
-  { $sort: { _id: 1 } }
+  { $match: { message_type: "alert",
+              timestamp: { $gte: "2026-03-01T00:00:00", $lt: "2026-03-02T00:00:00" } } },
+  { $group: { _id: { region: "$region_en", category: "$category_desc" }, alerts: { $sum: 1 } } },
+  { $sort: { alerts: -1 } }
 ])
 ```
 
