@@ -45,10 +45,10 @@ def deliver(db, user_id, limit=None):
 def demo():
     db = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)[DB_NAME]
 
-    haifa = zones_for_city(db, "חיפה")
+    haifa = zones_for_city(db, "חיפה")  # Haifa
     print(f"Haifa is {len(haifa)} polygons")
 
-    subscribe(db, "user:carmel", [z for z in haifa if "כרמל" in z])
+    subscribe(db, "user:carmel", [z for z in haifa if "כרמל" in z])  # the Carmel district
     subscribe(db, "user:all-haifa", haifa)
 
     narrow = pending(db, "user:carmel")

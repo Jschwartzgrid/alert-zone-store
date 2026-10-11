@@ -126,8 +126,8 @@ Tel Aviv 4. Three levels of place follow from that:
 
 | Field | Example | Meaning |
 |---|---|---|
-| `zone` | `חיפה - מערב` | The polygon a siren is raised for |
-| `city` | `חיפה` | The city a polygon belongs to, derived from its name |
+| `zone` | `חיפה - מערב` (Haifa – West) | The polygon a siren is raised for |
+| `city` | `חיפה` (Haifa) | The city a polygon belongs to, derived from its name |
 | `municipality` | `Misgav Regional Council` | The local authority responsible for it: 611 in total |
 
 ```json
@@ -154,6 +154,31 @@ Tel Aviv 4. Three levels of place follow from that:
   "source": "oref_alerts_history_v3"
 }
 ```
+
+Text fields are kept in the source's Hebrew. Each place field has an English
+counterpart ending in `_en`; `category_desc` does not, so the descriptions are
+translated below.
+
+| `category_desc` | English | `message_type` |
+|---|---|---|
+| `ירי רקטות וטילים` | Rocket and missile fire | `alert` |
+| `חדירת כלי טיס עוין` | Hostile aircraft intrusion | `alert` |
+| `התקרבו למרחב מוגן` | Move toward a protected space | `alert` |
+| `איום מלבנון - התקרבו למרחב מוגן` | Threat from Lebanon: move toward a protected space | `alert` |
+| `חדירת מחבלים` | Terrorist infiltration | `alert` |
+| `רעידת אדמה` | Earthquake | `alert` |
+| `בדקות הקרובות צפויות להתקבל התרעות באזורך` | Alerts are expected in your area in the coming minutes | `pre_alert` |
+| `האירוע הסתיים` | The event has ended | `all_clear` |
+| `ירי רקטות וטילים -  האירוע הסתיים` | Rocket and missile fire: the event has ended (note the double space, as in the source) | `all_clear` |
+| `חדירת כלי טיס עוין - האירוע הסתיים` | Hostile aircraft intrusion: the event has ended | `all_clear` |
+| `ניתן לצאת מהמרחב המוגן` | You may leave the protected space | `all_clear` |
+| `ניתן לצאת מהמרחב המוגן אך יש להישאר בקרבתו` | You may leave the protected space but should stay near it | `all_clear` |
+| `מבזק` | News flash | `info` |
+| `שהייה בסמיכות למרחב מוגן` | Stay near a protected space | `info` |
+| `סיום שהייה בסמיכות למרחב המוגן` | You no longer need to stay near the protected space | `info` |
+| `פיקוד העורף מעדכן` | Home Front Command update | `info` |
+
+These cover 99.8% of records. The rest are rarer shelter instructions and the all-clears for infiltration and earthquake alerts.
 
 `message_type` separates the 173,851 actual alerts from all-clears (199,550),
 pre-alerts (198,309) and bulletins (14,229). Counting every row as an alert
@@ -212,7 +237,7 @@ would send them 616 alerts that were not for them.
 - **0.3% of rows have no region or shelter time.** Historical alerts carry the
   polygon name as it was then, and some names have since been renamed, respelled
   or split. Those fields stay `null` rather than being guessed.
-- **Polygons are not towns.** Some cover several localities (`שדרות, איבים`).
+- **Polygons are not towns.** Some cover several localities (`שדרות, איבים`, Sderot and Ibim).
 - **Centre points only.** No source gives polygon boundaries, so subscriptions
   match by polygon name, not by location.
 - **No authentication.** MongoDB runs without access control, which is fine on

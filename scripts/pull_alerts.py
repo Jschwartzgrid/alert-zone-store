@@ -42,10 +42,15 @@ HEADERS = {
 }
 
 ACTIONABLE_CATEGORIES = {1, 2, 4, 7, 10}
-ALL_CLEAR_MARKERS = ("האירוע הסתיים", "הוסר החשש", "החשש הוסר", "ניתן לצאת",
-                     "הנחיות לחזרה")
-PRE_ALERT_MARKER = "בדקות הקרובות"
-SHELTER_MARKER = "התקרבו למרחב מוגן"
+ALL_CLEAR_MARKERS = (
+    "האירוע הסתיים",  # "the event has ended"
+    "הוסר החשש",      # "the concern has been lifted"
+    "החשש הוסר",      # (same, other word order)
+    "ניתן לצאת",      # "you may leave" (the shelter)
+    "הנחיות לחזרה",   # "guidance on returning" (after an earthquake)
+)
+PRE_ALERT_MARKER = "בדקות הקרובות"     # "in the coming minutes": alerts expected shortly
+SHELTER_MARKER = "התקרבו למרחב מוגן"   # "move toward a protected space"
 
 
 def get_json(url, params=None):
@@ -198,7 +203,7 @@ def merge_day_cache(records, seen, lo, hi):
 
 def classify(category, desc):
     d = desc or ""
-    # All-clear first: "ירי רקטות וטילים - האירוע הסתיים" also contains the rocket wording.
+    # All-clear first: "rocket and missile fire - the event has ended" also contains the rocket wording.
     if any(m in d for m in ALL_CLEAR_MARKERS):
         return "all_clear"
     if PRE_ALERT_MARKER in d:

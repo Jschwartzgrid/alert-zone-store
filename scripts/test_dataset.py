@@ -40,7 +40,7 @@ assert not mixed, f"city clusters with inconsistent region/shelter: {mixed[:3]}"
 types = Counter(d["message_type"] for d in docs)
 assert set(types) <= {"alert", "all_clear", "pre_alert", "info"}, set(types)
 for d in docs:
-    if "האירוע הסתיים" in (d["category_desc"] or ""):
+    if "האירוע הסתיים" in (d["category_desc"] or ""):  # "the event has ended"
         assert d["message_type"] == "all_clear", f"all-clear filed as {d['message_type']}"
 
 db = MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000).alerts_db
