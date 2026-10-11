@@ -167,12 +167,13 @@ def fetch_history(start, end):
 
     print(f"\n  {hits} polygon(s) from cache, {len(zones) - hits} fetched")
     if capped:
-        print(f"  WARNING: {len(capped)} polygon(s) hit the {RESPONSE_CAP} ceiling")
+        sys.exit(f"{len(capped)} polygon(s) hit the {RESPONSE_CAP}-row cap and would be "
+                 f"truncated; split their date range before writing anything: {capped}")
 
     recovered = merge_day_cache(records, seen, lo, hi)
     if recovered:
         print(f"  {recovered} record(s) recovered from the per-day cache")
-    return records, capped, refs
+    return records, refs
 
 
 def merge_day_cache(records, seen, lo, hi):
@@ -259,7 +260,6 @@ def normalize(raw, refs):
             "timestamp": ts,
             "lat": geo.get("lat") if geo else None,
             "lng": geo.get("lng") if geo else None,
-            "source": "oref_alerts_history_v3",
         })
     return cleaned, unmatched
 
@@ -267,15 +267,9 @@ def normalize(raw, refs):
 def main():
     DATA_DIR.mkdir(exist_ok=True)
     try:
-        raw, capped, refs = fetch_history(START_DATE, END_DATE)
+        raw, refs = fetch_history(START_DATE, END_DATE)
     except Exception as e:
         sys.exit(f"Fetch failed: {e}\n(the API only answers Israeli IPs)")
-
-    (DATA_DIR / "excluded_polygons.json").write_text(json.dumps({
-        "reason": f"response hit the {RESPONSE_CAP}-row cap and may be truncated",
-        "count": len(capped),
-        "polygons": capped,
-    }, indent=2), encoding="utf-8")
 
     write_gz(OUTPUT_RAW, raw)
     print(f"\nRaw dump written to {OUTPUT_RAW} ({len(raw)} records)")
@@ -283,7 +277,6 @@ def main():
     cleaned, unmatched = normalize(raw, refs)
     write_jsonl_gz(OUTPUT_CLEAN, cleaned)
     print(f"Normalized {len(cleaned)} record(s) written to {OUTPUT_CLEAN}")
-    print(f"{len(capped)} truncated polygon(s) listed in data/excluded_polygons.json")
 
     if unmatched:
         print(f"{len(unmatched)} polygon name(s) not in the official registry "

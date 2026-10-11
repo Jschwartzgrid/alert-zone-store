@@ -17,7 +17,6 @@ COPY data/alerts_clean.jsonl.gz /app/data/
 COPY docker/start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
-EXPOSE 27017
 HEALTHCHECK --interval=5s --timeout=5s --start-period=10s --retries=120 \
   CMD mongosh --quiet --eval 'quit(db.getSiblingDB("alerts_db").meta.findOne({_id: "load"}) ? 0 : 1)'
 

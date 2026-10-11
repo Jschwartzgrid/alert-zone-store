@@ -29,16 +29,11 @@ USER_SCHEMA = {"$jsonSchema": {
 }}
 
 ALERT_INDEXES = {
-    "by_time": [("timestamp", ASC)],
     "by_type_time": [("message_type", ASC), ("timestamp", ASC)],
     "by_zone_time": [("zone", ASC), ("timestamp", ASC)],
-    "by_zone_en": [("zone_en", ASC)],
     "by_city": [("city", ASC)],
     "by_municipality_time": [("municipality_en", ASC), ("timestamp", ASC)],
-    "by_region_time": [("region", ASC), ("timestamp", ASC)],
     "by_region_en_time": [("region_en", ASC), ("timestamp", ASC)],
-    "by_category": [("category", ASC)],
-    "by_event": [("event_id", ASC)],
 }
 
 USER_INDEXES = {

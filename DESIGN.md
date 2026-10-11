@@ -36,7 +36,7 @@ cost buy nothing here.
 | Risk | Handling |
 |---|---|
 | The source API changes or disappears | The system depends only on committed files. The history API has already moved host once |
-| The API silently truncates large responses | One request per polygon keeps each response far under the 3,000-row cap; any polygon at the cap is listed in `data/excluded_polygons.json` |
+| The API silently truncates large responses | One request per polygon keeps each response far under the 3,000-row cap; a polygon that reaches it stops the pull before anything is written |
 | Retired polygon names are invisible to per-polygon queries | Whole-day responses fill them in, from days that came back complete |
 | No unique record id in the source | `_id` is `rid:zone`; the tests assert it is unique |
 | Region and shelter time change upstream | Reference snapshots are saved with the pull and reused, so normalisation is repeatable |

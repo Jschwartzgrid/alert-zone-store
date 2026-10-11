@@ -99,7 +99,6 @@ python3 scripts/subscriptions.py     # per-user delivery demo
 | `data/alerts_clean.jsonl.gz` | The normalised dataset, one document per line. This is what gets loaded |
 | `data/alerts_raw.json.gz` | The untouched API records |
 | `data/ref_*.json.gz` | Reference snapshots taken with the pull |
-| `data/excluded_polygons.json` | Any polygon whose response hit the API's row cap. Empty |
 
 ## Data sources
 
@@ -150,8 +149,7 @@ Tel Aviv 4. Three levels of place follow from that:
   "shelter_time_seconds": 90,
   "timestamp": "2024-01-19T20:45:00",
   "lat": 32.8277,
-  "lng": 34.9801,
-  "source": "oref_alerts_history_v3"
+  "lng": 34.9801
 }
 ```
 
