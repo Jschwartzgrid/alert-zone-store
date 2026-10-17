@@ -43,6 +43,7 @@ def load(db):
         batch.clear()
 
     for d in iter_docs(INPUT):
+        d["timestamp_utc"] = datetime.fromisoformat(d["timestamp_utc"])  # stored as a BSON date
         batch.append(ReplaceOne({"_id": d["_id"]}, d, upsert=True))
         read += 1
         if len(batch) == BATCH:

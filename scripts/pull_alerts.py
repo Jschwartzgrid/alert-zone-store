@@ -12,8 +12,9 @@ import hashlib
 import json
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -25,6 +26,7 @@ GETDISTRICTS_URL = "https://alerts-history.oref.org.il/Shared/Ajax/GetDistricts.
 DISTRICTS_URL = "https://www.oref.org.il/districts/districts_{lang}.json"
 CITIES_URL = "https://www.tzevaadom.co.il/static/cities.json"
 
+ISRAEL = ZoneInfo("Asia/Jerusalem")  # the API publishes local wall-clock time
 RESPONSE_CAP = 3000  # the history endpoint silently truncates at this many rows
 RETRIES = 3
 PAUSE_SECONDS = 0.4
@@ -214,6 +216,12 @@ def classify(category, desc):
     return "info"
 
 
+def to_utc(local_iso):
+    # In the repeated hour when clocks go back, the first occurrence is taken.
+    local = datetime.fromisoformat(local_iso).replace(tzinfo=ISRAEL)
+    return local.astimezone(timezone.utc).isoformat()
+
+
 def city_cluster(zone_name):
     return zone_name.split(" - ")[0].strip() if " - " in zone_name else zone_name
 
@@ -258,6 +266,7 @@ def normalize(raw, refs):
             "region_en": en["areaname"] if en else None,
             "shelter_time_seconds": off["migun_time"] if off else None,
             "timestamp": ts,
+            "timestamp_utc": to_utc(ts),
             "lat": geo.get("lat") if geo else None,
             "lng": geo.get("lng") if geo else None,
         })

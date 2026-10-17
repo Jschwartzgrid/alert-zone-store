@@ -10,10 +10,11 @@ DB_NAME = os.environ.get("MONGO_DB", "alerts_db")
 # Pin only the fields every alert must have; new categories may add others.
 ALERT_SCHEMA = {"$jsonSchema": {
     "bsonType": "object",
-    "required": ["zone", "timestamp", "category", "message_type"],
+    "required": ["zone", "timestamp", "timestamp_utc", "category", "message_type"],
     "properties": {
         "zone": {"bsonType": "string"},
         "timestamp": {"bsonType": "string"},
+        "timestamp_utc": {"bsonType": "date"},
         "category": {"bsonType": "int"},
         "message_type": {"enum": ["alert", "all_clear", "pre_alert", "info"]},
     },

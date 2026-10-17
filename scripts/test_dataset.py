@@ -3,6 +3,7 @@
 import gzip
 import json
 from collections import Counter
+from datetime import datetime
 from pathlib import Path
 
 from pymongo import MongoClient
@@ -27,6 +28,8 @@ assert max(per_zone.values()) < 3000, f"polygon at response cap: {per_zone.most_
 
 for d in docs:
     assert d["timestamp"] and d["zone"], f"missing core field: {d}"
+    offset = datetime.fromisoformat(d["timestamp"]) - datetime.fromisoformat(d["timestamp_utc"]).replace(tzinfo=None)
+    assert offset.total_seconds() in (7200, 10800), f"Israel is UTC+2 or +3, got {offset}: {d['_id']}"
     assert d["city"] == d["zone"].split(" - ")[0].strip(), f"bad cluster: {d['zone']}"
 assert len({d["city"] for d in docs}) < len(per_zone), "no polygons were clustered"
 
@@ -46,6 +49,7 @@ for d in docs:
 db = MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000).alerts_db
 assert db.alerts.count_documents({}) == len(docs), "database count differs from file"
 assert db.meta.find_one({"_id": "load"}), "no completed load recorded"
+assert isinstance(db.alerts.find_one()["timestamp_utc"], datetime), "timestamp_utc not stored as a date"
 for idx in ("by_region_en_time", "by_type_time", "by_zone_time", "by_municipality_time"):
     assert idx in db.alerts.index_information(), f"index {idx} missing"
 assert "by_zone_sub" in db.users.index_information(), "users collection not set up"

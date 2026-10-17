@@ -149,10 +149,20 @@ Tel Aviv 4. Three levels of place follow from that:
   "region_en": "Haifa",
   "shelter_time_seconds": 90,
   "timestamp": "2024-01-19T20:45:00",
+  "timestamp_utc": "2024-01-19T18:45:00+00:00",
   "lat": 32.8277,
   "lng": 34.9801
 }
 ```
+
+**Time.** `timestamp` is the time exactly as Pikud Haoref publishes it: Israel
+local wall-clock time (Asia/Jerusalem), to the minute, with no zone marker.
+`timestamp_utc` is the same moment converted to UTC and stored as a date. Israel
+is UTC+2 in winter and UTC+3 in summer, so the two differ by two or three hours.
+Use `timestamp` for Israeli days and hours, as the example queries do, and
+`timestamp_utc` to compare with anything outside Israel. 21 alerts fall in the
+hour that repeats when the clocks go back; they are read as its first
+occurrence.
 
 Text fields are kept in the source's Hebrew. Each place field has an English
 counterpart ending in `_en`; `category_desc` does not, so the descriptions are
